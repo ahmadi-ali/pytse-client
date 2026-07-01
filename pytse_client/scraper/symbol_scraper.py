@@ -5,12 +5,12 @@ from dataclasses import dataclass
 from typing import List
 
 import aiohttp
-import requests
 from bs4 import BeautifulSoup
 from requests import HTTPError
 
 from pytse_client import config, tse_settings
 from pytse_client.utils.persian import replace_arabic
+from pytse_client.utils.request_session import requests_retry_session
 
 logger = logging.getLogger(config.LOGGER_NAME)
 
@@ -41,7 +41,9 @@ def get_market_symbols_from_symbols_list_page() -> List[MarketSymbol]:
     :rtype: List[MarketSymbol]
     """
     url = tse_settings.SYMBOLS_LIST_URL
-    soup = BeautifulSoup(requests.get(url).content, "html.parser")
+    soup = BeautifulSoup(
+        requests_retry_session().get(url).content, "html.parser"
+    )
     table = soup.find("table")
     market_symbols = []
     # Theres no thead or tbody in this table tag
@@ -70,7 +72,7 @@ def get_market_symbols_from_market_watch_page() -> List[MarketSymbol]:
     :return: list of market symbols
     :rtype: List[MarketSymbol]
     """
-    response = requests.get(tse_settings.MARKET_WATCH_INIT_URL)
+    response = requests_retry_session().get(tse_settings.MARKET_WATCH_INIT_URL)
 
     # response contain different groups for different data
     response_groups = response.text.split("@")

@@ -2,6 +2,8 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
+from pytse_client import config
+
 
 def requests_retry_session(
     retries=5,
@@ -20,4 +22,6 @@ def requests_retry_session(
     adapter = HTTPAdapter(max_retries=retry)
     session.mount("http://", adapter)
     session.mount("https://", adapter)
+    if config.PROXY:
+        session.proxies = {"http": config.PROXY, "https": config.PROXY}
     return session

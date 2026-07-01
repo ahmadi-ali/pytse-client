@@ -1,6 +1,7 @@
 from .asks_bids import get_asks_and_bids
 from .orderbook.order_book import get_orderbook
 from .historical_intraday.trade_details import get_trade_details
+from .config import set_proxy
 from .download import (
     download,
     download_client_types_records,
